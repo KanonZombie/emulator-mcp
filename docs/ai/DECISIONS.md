@@ -9,3 +9,4 @@
 - Document CLI commands, MCP tools, legacy aliases, and scenario operations from source signatures instead of maintaining a separate command registry.
 - Expose memory inspection as one bounded `read_memory` range command with an explicit domain and uppercase hexadecimal response.
 - Normalize Mega Drive `M68K BUS` addresses from sign-extended 32-bit form to the core's 24-bit bus before dispatch.
+- Keep path assertions aligned with production's canonicalization so Windows 8.3 aliases do not create false failures.

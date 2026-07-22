@@ -180,11 +180,41 @@ the pair file's GB/MD entries; the target option is not needed.
 ```powershell
 & .\.venv\Scripts\emulator-mcp.exe --target md --test status
 & .\.venv\Scripts\emulator-mcp.exe --target gb --test tap A 8 2
-& .\.venv\Scripts\emulator-mcp.exe --target md --test read-memory 0xFFFFE75E 2 "M68K BUS"
+& .\.venv\Scripts\emulator-mcp.exe --target md --test read-memory 0xFFE75E 2 "M68K BUS"
 & .\.venv\Scripts\emulator-mcp.exe --target gb --test read-memory 0xC000 16 "System Bus"
 & .\.venv\Scripts\emulator-mcp.exe --target gb --test save-state title_screen
 & .\.venv\Scripts\emulator-mcp.exe --test run-pair-scenario scenarios/pairs/title_start.json
 ```
+
+### Memory read examples
+
+`read-memory` uses the exact BizHawk memory-domain name. These examples read
+the main RAM and video memory for each supported console:
+
+**Mega Drive / Genesis**
+
+```powershell
+# Main 68K RAM: bus address FF0000--FFFFFF
+& .\.venv\Scripts\emulator-mcp.exe --target md --test read-memory 0xFFE75E 16 "M68K BUS"
+
+# VDP video RAM: domain-relative address 0000--FFFF
+& .\.venv\Scripts\emulator-mcp.exe --target md --test read-memory 0x0000 16 "VRAM"
+```
+
+**Game Boy / Game Boy Color**
+
+```powershell
+# Work RAM (WRAM): CPU address C000--DFFF
+& .\.venv\Scripts\emulator-mcp.exe --target gb --test read-memory 0xC000 16 "System Bus"
+
+# Video RAM (VRAM): CPU address 8000--9FFF
+& .\.venv\Scripts\emulator-mcp.exe --target gb --test read-memory 0x8000 16 "System Bus"
+```
+
+For Mega Drive, `0xE75E` in a RAM Watch RAM domain corresponds to `0xFFE75E`
+in `M68K BUS`. Sign-extended values such as `0xFFFFE75E` are normalized to the
+same bus address. Memory reads return uppercase hexadecimal bytes and do not
+advance the emulator frame.
 
 ## MCP tools
 

@@ -12,5 +12,6 @@
 - Added CLI, MCP, legacy-alias, and BizHawk bridge commands for bounded memory reads.
 - Bumped the package and bridge version to `1.1.0`.
 - Documented reinstalling the MCP package when a client still runs an older installed module.
+- Fixed the Windows CI runtime-path assertion by resolving the expected temporary path before comparison.
 - Normalized sign-extended 68000 addresses for Mega Drive `M68K BUS` reads and documented the RAM offset mapping.
 - Pending: run the optional BizHawk smoke matrix on a machine with BizHawk and legal local ROMs.
