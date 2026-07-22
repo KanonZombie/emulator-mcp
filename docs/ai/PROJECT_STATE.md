@@ -11,3 +11,4 @@ Updated: 2026-07-22
 - A source checkout can also be used directly by setting `EMULATOR_MCP_HOME` and launching BizHawk with the repository bridge; that layout writes to `runtime/<target>/`.
 - Unit tests run without BizHawk; the smoke runner is opt-in and needs a local emulator and ROM.
 - README now contains the complete CLI, MCP tool, legacy alias, and scenario operation reference.
+- The README direct-checkout example uses generic Windows paths and keeps the repository root as `EMULATOR_MCP_HOME`.

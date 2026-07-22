@@ -72,14 +72,14 @@ from the same `.emulator-mcp` directory configured for the MCP client.
 
 For local development, you can use the repository as the project home without
 running `init`. In PowerShell, set the environment variable before launching
-BizHawk:
+BizHawk. Replace these example paths with the locations on your machine:
 
 ```powershell
-$env:EMULATOR_MCP_HOME = "<emulator-mcp-path>"
+$env:EMULATOR_MCP_HOME = "C:\path\to\emulator-mcp"
 
-& "<bizhawk-path>\EmuHawk.exe" `
-  "--lua=<emulator-mcp-path>\bizhawk\bridge.lua" `
-  "<rom-file-path>"
+& "C:\path\to\BizHawk\EmuHawk.exe" `
+  "--lua=C:\path\to\emulator-mcp\bizhawk\bridge.lua" `
+  "C:\path\to\roms\game.gb"
 ```
 
 This starts BizHawk with the Game Boy ROM and the repository bridge. Runtime
