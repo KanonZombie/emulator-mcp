@@ -56,10 +56,45 @@ class McpCoreTests(unittest.TestCase):
             self.assertEqual(result["targets"], ["gb", "md", "nes", "snes"])
             self.assertIn('NES = "nes"', source)
             self.assertIn('SNES = "snes"', source)
+            self.assertIn('cmd == "read_memory"', source)
             self.assertIn('return nil, "button_not_available"', source)
             self.assertNotIn("E:\\desarrollo", source)
             for target in result["targets"]:
                 self.assertTrue((Path(result["home"]) / "runtime" / target).is_dir())
+
+    def test_memory_read_normalizes_hex_address_and_dispatches(self) -> None:
+        self.assertEqual(mcp_server.normalize_memory_read("010", 1, "System Bus")[0], 10)
+        self.assertEqual(
+            mcp_server.normalize_memory_read("0xFFFFE75E", 1, "M68K BUS")[0],
+            0xFFE75E,
+        )
+        with patch.object(mcp_server, "require_bridge_capabilities") as require_capabilities:
+            with patch.object(mcp_server, "send_command", return_value={"status": "ok"}) as send_command:
+                result = mcp_server.emulator_read_memory(
+                    target="gb",
+                    address="0xC000",
+                    length=4,
+                    domain="System Bus",
+                )
+
+        self.assertEqual(result, {"status": "ok"})
+        require_capabilities.assert_called_once_with("gb", ["memory_read"])
+        send_command.assert_called_once_with(
+            "gb",
+            "read_memory",
+            0xC000,
+            4,
+            "System Bus",
+            timeout_sec=10,
+        )
+
+    def test_memory_read_rejects_invalid_ranges(self) -> None:
+        with self.assertRaises(ValueError):
+            mcp_server.normalize_memory_read(-1, 1, "System Bus")
+        with self.assertRaises(ValueError):
+            mcp_server.normalize_memory_read("0xC000", 0, "System Bus")
+        with self.assertRaises(ValueError):
+            mcp_server.normalize_memory_read("0xC000", 1, "System|Bus")
 
     def test_smoke_rom_builders_create_expected_formats(self) -> None:
         expected = {

@@ -9,4 +9,8 @@
 - Added a direct-checkout PowerShell launch example with explicit `EMULATOR_MCP_HOME`, BizHawk, bridge, and ROM paths.
 - Replaced machine-specific direct-checkout paths in the README with generic Windows examples.
 - Fixed Lua bridge home resolution for BizHawk Lua Console sessions by honoring `EMULATOR_MCP_HOME` and removing the PowerShell path guess.
+- Added CLI, MCP, legacy-alias, and BizHawk bridge commands for bounded memory reads.
+- Bumped the package and bridge version to `1.1.0`.
+- Documented reinstalling the MCP package when a client still runs an older installed module.
+- Normalized sign-extended 68000 addresses for Mega Drive `M68K BUS` reads and documented the RAM offset mapping.
 - Pending: run the optional BizHawk smoke matrix on a machine with BizHawk and legal local ROMs.

@@ -107,6 +107,9 @@ def run_target(mcp_server, executable: Path, bridge: Path, rom: Path, target: st
         if info.get("bridge_version") != mcp_server.VERSION:
             raise AssertionError(f"Unexpected bridge version for {target}: {info}")
         mcp_server.emulator_buttons(target)
+        memory = mcp_server.emulator_read_memory(target=target, address=0, length=1)
+        if len(memory.get("hex", "")) != 2:
+            raise AssertionError(f"Unexpected memory read for {target}: {memory}")
         mcp_server.emulator_step(target, 2)
         mcp_server.emulator_tap(target, "A", 1, 1)
         screenshot = mcp_server.emulator_screenshot(target, "smoke")

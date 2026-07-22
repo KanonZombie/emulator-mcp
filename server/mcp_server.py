@@ -19,7 +19,8 @@ from PIL import Image, ImageChops, ImageDraw, ImageFont
 from gb_gpu_renderer import render_snapshot
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "1.0.0"
+VERSION = "1.1.0"
+MAX_MEMORY_READ = 0x10000
 VALID_TARGETS = {"gb", "md", "nes", "snes"}
 
 
@@ -135,6 +136,40 @@ def send_command(target: str, *parts: object, timeout_sec: float = 10.0) -> Dict
 def safe_name(name: str) -> str:
     name = name.strip() or "shot"
     return re.sub(r"[^a-zA-Z0-9_.-]+", "_", name)
+
+
+def normalize_memory_read(address: int | str, length: int, domain: str) -> tuple[int, int, str]:
+    if isinstance(address, bool):
+        raise ValueError("Memory address must be an integer or hexadecimal string")
+
+    address_text = str(address).strip()
+    if re.fullmatch(r"[0-9]+", address_text):
+        normalized_address = int(address_text, 10)
+    else:
+        try:
+            normalized_address = int(address_text, 0)
+        except ValueError:
+            if not re.fullmatch(r"[0-9a-fA-F]+", address_text):
+                raise ValueError(f"Invalid memory address: {address}") from None
+            normalized_address = int(address_text, 16)
+
+    if not 0 <= normalized_address <= 0xFFFFFFFF:
+        raise ValueError("Memory address must be between 0 and 0xFFFFFFFF")
+    if isinstance(length, bool):
+        raise ValueError("Memory length must be an integer")
+    normalized_length = int(length)
+    if not 1 <= normalized_length <= MAX_MEMORY_READ:
+        raise ValueError(f"Memory length must be between 1 and {MAX_MEMORY_READ}")
+
+    normalized_domain = str(domain or "System Bus").strip() or "System Bus"
+    if "|" in normalized_domain:
+        raise ValueError("Memory domain cannot contain '|'")
+    if normalized_domain.upper() == "M68K BUS":
+        if normalized_address >= 0xFF000000:
+            normalized_address &= 0xFFFFFF
+        if normalized_address > 0xFFFFFF:
+            raise ValueError("M68K BUS addresses must fit the 24-bit address bus")
+    return normalized_address, normalized_length, normalized_domain
 
 
 def state_path_from_name(target: str, name: str) -> Path:
@@ -503,7 +538,7 @@ def old_bridge_error(missing: str) -> str:
 
 
 def missing_capability_hint(required: List[str]) -> str:
-    for capability in ("reset", "save_state", "load_state", "tap", "hold", "release"):
+    for capability in ("reset", "save_state", "load_state", "tap", "hold", "release", "memory_read"):
         if capability in required:
             return capability
     return "bridge_info"
@@ -634,6 +669,20 @@ def emulator_load_baseline(target: str = "gb", name: str = "baseline") -> dict:
 def emulator_buttons(target: str = "gb") -> dict:
     """Return current BizHawk joypad button names/states."""
     return send_command(target, "buttons", timeout_sec=3)
+
+
+@mcp.tool()
+def emulator_read_memory(
+    target: str = "gb",
+    *,
+    address: int | str,
+    length: int = 1,
+    domain: str = "System Bus",
+) -> dict:
+    """Read a memory range and return its bytes as an uppercase hex string."""
+    address, length, domain = normalize_memory_read(address, length, domain)
+    require_bridge_capabilities(target, ["memory_read"])
+    return send_command(target, "read_memory", address, length, domain, timeout_sec=10)
 
 
 @mcp.tool()
@@ -1371,6 +1420,12 @@ def bizhawk_load_baseline(name: str) -> dict:
 
 
 @mcp.tool()
+def bizhawk_read_memory(address: int | str, length: int = 1, domain: str = "System Bus") -> dict:
+    """GB-compatible wrapper for emulator_read_memory."""
+    return emulator_read_memory(target="gb", address=address, length=length, domain=domain)
+
+
+@mcp.tool()
 def bizhawk_run_sequence(operations: List[dict]) -> dict:
     """GB-compatible sequence runner."""
     results = []
@@ -1454,6 +1509,7 @@ def cli_test(argv: List[str]) -> None:
         print("  emulator-mcp --target gb --test release 2")
         print("  emulator-mcp --target gb --test reset")
         print("  emulator-mcp --target gb --test buttons")
+        print("  emulator-mcp --target gb --test read-memory 0xC000 16 \"System Bus\"")
         print("  emulator-mcp --target gb --test press START 10")
         print("  emulator-mcp --target gb --test save-state title_screen")
         print("  emulator-mcp --target gb --test load-state title_screen")
@@ -1538,6 +1594,16 @@ def cli_test(argv: List[str]) -> None:
         print(emulator_build_pair_diffs(cmd_args[0]))
     elif cmd == "buttons":
         print(emulator_buttons(target))
+    elif cmd == "read-memory":
+        if len(cmd_args) < 1:
+            raise SystemExit(
+                "Usage: emulator-mcp --target <gb|md|nes|snes> --test read-memory "
+                "<address> [length] [domain]"
+            )
+        address = cmd_args[0]
+        length = int(cmd_args[1]) if len(cmd_args) > 1 else 1
+        domain = " ".join(cmd_args[2:]) if len(cmd_args) > 2 else "System Bus"
+        print(emulator_read_memory(target=target, address=address, length=length, domain=domain))
     else:
         raise SystemExit(f"Unknown test command: {cmd}")
 
