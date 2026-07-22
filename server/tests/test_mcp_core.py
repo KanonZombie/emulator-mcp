@@ -20,7 +20,7 @@ class McpCoreTests(unittest.TestCase):
                 with patch.object(mcp_server, "HOME", Path(tmp)):
                     for target in ("gb", "md", "nes", "snes"):
                         context = mcp_server.get_target_context(target)
-                        self.assertEqual(context.runtime_dir, Path(tmp) / "runtime" / target)
+                        self.assertEqual(context.runtime_dir, (Path(tmp) / "runtime" / target).resolve())
 
     def test_unknown_target_is_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "Unknown emulator target"):
