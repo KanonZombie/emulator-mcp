@@ -7,3 +7,6 @@
 - Do not add ROMs, savestates, screenshots, logs, runtime command files, virtual environments, or build output to version control.
 - Preserve the legacy `bizhawk_*` Game Boy-compatible tool aliases.
 - Keep command-reference tables aligned with the actual CLI branches and `@mcp.tool` signatures.
+- Keep memory reads bounded to 64 KiB and validate the requested domain before reading.
+- Normalize sign-extended 68000 addresses to 24 bits only for the `M68K BUS` domain.
+- Compare Windows filesystem paths canonically in tests; do not rely on temporary-directory spelling.

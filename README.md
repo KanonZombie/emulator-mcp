@@ -13,9 +13,9 @@ Deterministic BizHawk control over MCP for Game Boy, Mega Drive/Genesis, NES, an
 ## What is this?
 
 This project exposes BizHawk as an MCP server. It sends input, frame-step,
-screenshot, reset, and savestate commands through a portable Lua bridge that
-exchanges atomic files with Python. JSON scenarios make emulator checks
-repeatable without requiring a BizHawk plugin or a socket service.
+screenshot, reset, savestate, and memory-read commands through a portable Lua
+bridge that exchanges atomic files with Python. JSON scenarios make emulator
+checks repeatable without requiring a BizHawk plugin or a socket service.
 
 The package does not include BizHawk or ROMs. Use legally obtained ROMs and
 install BizHawk separately.
@@ -123,7 +123,7 @@ bridge to be running in BizHawk:
 & .\.venv\Scripts\emulator-mcp.exe --target snes --test screenshot title
 ```
 
-`bridge-info` should report bridge version `1.0.0`. A timeout normally means
+`bridge-info` should report bridge version `1.1.0`. A timeout normally means
 that the Lua script is not running or `EMULATOR_MCP_HOME` points to a different
 directory.
 
@@ -156,6 +156,7 @@ files. Use this prefix for the diagnostic commands:
 | `status` | none | Return system, frame, and screen size. |
 | `bridge-info` | none | Return bridge version, detected system, and capabilities. |
 | `buttons` | none | Return BizHawk button names and current states. |
+| `read-memory` | `<address> [length=1] [domain=System Bus]` | Read a memory range and return its bytes as uppercase hexadecimal. Addresses accept decimal or `0x` hexadecimal notation; length is limited to 64 KiB. |
 | `step` | `[frames=1]` | Advance neutral input; frames are clamped to 1--600. |
 | `tap` | `<button> [hold_frames=8] [release_frames=2]` | Tap a button; hold is clamped to 1--120 and release to 1--600. |
 | `hold` | `<button> [frames=1]` | Hold a button; frames are clamped to 1--120. |
@@ -179,9 +180,41 @@ the pair file's GB/MD entries; the target option is not needed.
 ```powershell
 & .\.venv\Scripts\emulator-mcp.exe --target md --test status
 & .\.venv\Scripts\emulator-mcp.exe --target gb --test tap A 8 2
+& .\.venv\Scripts\emulator-mcp.exe --target md --test read-memory 0xFFE75E 2 "M68K BUS"
+& .\.venv\Scripts\emulator-mcp.exe --target gb --test read-memory 0xC000 16 "System Bus"
 & .\.venv\Scripts\emulator-mcp.exe --target gb --test save-state title_screen
 & .\.venv\Scripts\emulator-mcp.exe --test run-pair-scenario scenarios/pairs/title_start.json
 ```
+
+### Memory read examples
+
+`read-memory` uses the exact BizHawk memory-domain name. These examples read
+the main RAM and video memory for each supported console:
+
+**Mega Drive / Genesis**
+
+```powershell
+# Main 68K RAM: bus address FF0000--FFFFFF
+& .\.venv\Scripts\emulator-mcp.exe --target md --test read-memory 0xFFE75E 16 "M68K BUS"
+
+# VDP video RAM: domain-relative address 0000--FFFF
+& .\.venv\Scripts\emulator-mcp.exe --target md --test read-memory 0x0000 16 "VRAM"
+```
+
+**Game Boy / Game Boy Color**
+
+```powershell
+# Work RAM (WRAM): CPU address C000--DFFF
+& .\.venv\Scripts\emulator-mcp.exe --target gb --test read-memory 0xC000 16 "System Bus"
+
+# Video RAM (VRAM): CPU address 8000--9FFF
+& .\.venv\Scripts\emulator-mcp.exe --target gb --test read-memory 0x8000 16 "System Bus"
+```
+
+For Mega Drive, `0xE75E` in a RAM Watch RAM domain corresponds to `0xFFE75E`
+in `M68K BUS`. Sign-extended values such as `0xFFFFE75E` are normalized to the
+same bus address. Memory reads return uppercase hexadecimal bytes and do not
+advance the emulator frame.
 
 ## MCP tools
 
@@ -192,6 +225,7 @@ Generic tools accept `target="gb"`, `"md"`, `"nes"`, or `"snes"`:
 | `emulator_status` | `target="gb"` | Return system, frame, and screen size. |
 | `emulator_bridge_info` | `target="gb"` | Return bridge version and capabilities. |
 | `emulator_buttons` | `target="gb"` | Return BizHawk button names and states. |
+| `emulator_read_memory` | `target="gb", address, length=1, domain="System Bus"` | Read a memory range and return uppercase hexadecimal bytes. Maximum length is 64 KiB. |
 | `emulator_step` | `target="gb", frames=1` | Advance neutral input; frames 1--600. |
 | `emulator_tap` | `target="gb", button="", hold_frames=8, release_frames=2` | Tap one button; hold 1--120 and release 1--600. |
 | `emulator_hold` | `target="gb", button="", frames=1` | Hold one button; frames 1--120. |
@@ -231,6 +265,7 @@ The original Game Boy-only MCP names remain available as legacy aliases:
 | `bizhawk_load_state` | `name` | Load a named Game Boy state. |
 | `bizhawk_create_baseline` | `name` | Save a named Game Boy baseline. |
 | `bizhawk_load_baseline` | `name` | Load a named Game Boy baseline. |
+| `bizhawk_read_memory` | `address, length=1, domain="System Bus"` | Legacy Game Boy memory-read alias. |
 | `bizhawk_run_sequence` | `operations` | Run a list of scenario operations against Game Boy. |
 | `bizhawk_run_scenario` | `path` | Run a JSON scenario against Game Boy. |
 
@@ -261,7 +296,10 @@ the legacy top-level `load_state` and optional `save_state_after` fields.
 - `reset` reboots the core and advances neutral settling frames.
 
 Frame counts are bounded by both the server and the bridge. Button names are
-case-insensitive.
+case-insensitive. Memory reads return an uppercase `hex` field and do not
+advance the emulator frame. For Mega Drive, use the exact `M68K BUS` domain;
+the sign-extended address `0xFFFFE75E` is normalized to bus address
+`0xFFE75E`, corresponding to offset `0xE75E` in the main RAM domain.
 
 ## Scenarios
 
@@ -364,8 +402,9 @@ git status --short --ignored
 
 - **Timeout:** reload and run `.emulator-mcp/bizhawk/bridge.lua`, then verify
   that the MCP client's `EMULATOR_MCP_HOME` is the same absolute directory.
-- **Old or unknown command:** run `emulator-mcp init .emulator-mcp` again and
-  reload the copied Lua script in BizHawk.
+- **Old or unknown command:** reinstall the package in the MCP client's Python
+  environment, run `emulator-mcp init .emulator-mcp` again, and reload the Lua
+  script in BizHawk. A running MCP client may also need to be restarted.
 - **Unsupported system:** open a GB/GBC, Genesis, NES, or SNES ROM before
   loading the bridge.
 - **Wrong buttons:** call `emulator_buttons`; BizHawk exposes the core's exact

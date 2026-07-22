@@ -35,10 +35,10 @@ local BRIDGE_DIR = home_dir .. "/runtime/" .. TARGET
 local CMD_FILE = BRIDGE_DIR .. "/command.txt"
 local RESP_FILE = BRIDGE_DIR .. "/response.txt"
 local LOG_FILE = BRIDGE_DIR .. "/bridge.log"
-local BRIDGE_VERSION = "1.0.0"
+local BRIDGE_VERSION = "1.1.0"
 local BRIDGE_CAPABILITIES = {
   "status", "step", "tap", "hold", "release",
-  "screenshot", "save_state", "load_state", "reset"
+  "screenshot", "save_state", "load_state", "reset", "memory_read"
 }
 if TARGET == "gb" then table.insert(BRIDGE_CAPABILITIES, "gb_gpu_snapshot") end
 
@@ -235,6 +235,14 @@ local function read_domain_binary(addr, length, domain)
   end
 
   return table.concat(chunks, ""), nil
+end
+
+local function bytes_to_hex(bytes)
+  local chunks = {}
+  for i = 1, #bytes do
+    chunks[i] = string.format("%02X", string.byte(bytes, i))
+  end
+  return table.concat(chunks, "")
 end
 
 function read_u8_checked(addr, domain)
@@ -583,6 +591,55 @@ local function handle_command(line)
       system = emu.getsystemid(),
       bridge_version = BRIDGE_VERSION,
       capabilities = join_table(BRIDGE_CAPABILITIES, ",")
+    })
+    return
+  end
+
+  if cmd == "read_memory" then
+    local address = tonumber(parts[3])
+    local length = tonumber(parts[4]) or 1
+    local domain = parts[5] or "System Bus"
+    local domains = memory_domains()
+
+    if not address or math.floor(address) ~= address or address < 0 or address > 0xFFFFFFFF then
+      respond(id, "error", { error = "invalid_memory_address" })
+      return
+    end
+    if math.floor(length) ~= length or length < 1 or length > 0x10000 then
+      respond(id, "error", { error = "invalid_memory_length", max_length = 0x10000 })
+      return
+    end
+    if domain == "" or string.find(domain, "|", 1, true) then
+      respond(id, "error", { error = "invalid_memory_domain" })
+      return
+    end
+    if not find_domain_exact(domain, domains) then
+      respond(id, "error", {
+        error = "unknown_memory_domain",
+        domain = domain,
+        available_domains = join_table(domains, ",")
+      })
+      return
+    end
+
+    local bytes, read_err = read_domain_binary(address, length, domain)
+    if not bytes then
+      respond(id, "error", {
+        error = "memory_read_failed",
+        detail = read_err or "unknown_memory_read_error",
+        address = address,
+        length = length,
+        domain = domain
+      })
+      return
+    end
+
+    respond(id, "ok", {
+      frame = emu.framecount(),
+      address = address,
+      length = length,
+      domain = domain,
+      hex = bytes_to_hex(bytes)
     })
     return
   end
