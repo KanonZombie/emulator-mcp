@@ -1,0 +1,21 @@
+{
+  "id": "md.intro_battle_motion",
+  "description": "MegaMon intro battle motion checkpoints for Gengar/Nidorino.",
+  "start": {
+    "mode": "reset",
+    "settle_frames": 60
+  },
+  "steps": [
+    {"release": 10},
+    {"step": 550},
+    {"screenshot": "battle_entry"},
+    {"step": 170},
+    {"screenshot": "gengar_raise"},
+    {"step": 35},
+    {"screenshot": "gengar_slash"},
+    {"step": 45},
+    {"screenshot": "nidorino_recoil"},
+    {"step": 80},
+    {"screenshot": "battle_recover"}
+  ]
+}

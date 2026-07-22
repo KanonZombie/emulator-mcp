@@ -1,0 +1,16 @@
+{
+  "id": "gb.title_start",
+  "description": "Capture the title screen before and after pressing START on Game Boy.",
+  "start": {
+    "mode": "reset",
+    "settle_frames": 60
+  },
+  "steps": [
+    {"release": 10},
+    {"step": 600},
+    {"screenshot": "title_before_start"},
+    {"tap": "START", "hold_frames": 12, "release_frames": 2},
+    {"step": 90},
+    {"screenshot": "title_after_start"}
+  ]
+}

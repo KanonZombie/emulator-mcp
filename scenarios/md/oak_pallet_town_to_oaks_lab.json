@@ -1,0 +1,37 @@
+{
+  "id": "md.oak_pallet_town_to_oaks_lab",
+  "description": "MegaMon overworld warp verifier from Pallet Town after leaving Red's house to Oak's Lab.",
+  "start": {
+    "mode": "load_state",
+    "state": "oak_pallet_town_entry"
+  },
+  "save_state_after": "oak_oaks_lab_entry",
+  "steps": [
+    {"screenshot": "pallet_town_entry"},
+    {"hold": "DOWN", "frames": 120},
+    {"release": 20},
+    {"step": 120},
+    {"hold": "RIGHT", "frames": 120},
+    {"release": 20},
+    {"step": 120},
+    {"hold": "RIGHT", "frames": 30},
+    {"release": 20},
+    {"step": 120},
+    {"hold": "DOWN", "frames": 120},
+    {"release": 20},
+    {"step": 120},
+    {"hold": "DOWN", "frames": 60},
+    {"release": 20},
+    {"step": 120},
+    {"hold": "RIGHT", "frames": 120},
+    {"release": 20},
+    {"step": 120},
+    {"hold": "RIGHT", "frames": 30},
+    {"release": 20},
+    {"step": 120},
+    {"hold": "UP", "frames": 60},
+    {"release": 20},
+    {"step": 120},
+    {"screenshot": "oaks_lab_entry"}
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "md.new_game_to_overworld",
+  "description": "MegaMon smoke scenario from title menu into the first overworld map.",
+  "start": {
+    "mode": "reset",
+    "settle_frames": 60
+  },
+  "steps": [
+    {"release": 10},
+    {"step": 600},
+    {"step": 600},
+    {"step": 100},
+    {"screenshot": "title_reached"},
+    {"tap": "START", "hold_frames": 12, "release_frames": 2},
+    {"step": 60},
+    {"screenshot": "main_menu"},
+    {"tap": "A", "hold_frames": 12, "release_frames": 2},
+    {"step": 90},
+    {"screenshot": "overworld_entry"}
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "id": "md.oak_after_player_name_to_rival_name_menu",
+  "description": "MegaMon OakSpeech continuation from confirmed RED player name to the default rival-name menu.",
+  "start": {
+    "mode": "load_state",
+    "state": "oak_player_name_red_confirm"
+  },
+  "save_state_after": "oak_rival_name_menu",
+  "steps": [
+    {"screenshot": "player_name_red_confirm"},
+    {"tap": "A", "hold_frames": 8, "release_frames": 4},
+    {"step": 220},
+    {"screenshot": "rival_intro_start"},
+
+    {"tap": "A", "hold_frames": 8, "release_frames": 4},
+    {"step": 180},
+    {"tap": "A", "hold_frames": 8, "release_frames": 4},
+    {"step": 180},
+    {"tap": "A", "hold_frames": 8, "release_frames": 4},
+    {"step": 180},
+    {"tap": "A", "hold_frames": 8, "release_frames": 4},
+    {"step": 180},
+    {"tap": "A", "hold_frames": 8, "release_frames": 4},
+    {"step": 90},
+    {"screenshot": "rival_name_menu"}
+  ]
+}

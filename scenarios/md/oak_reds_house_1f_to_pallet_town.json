@@ -1,0 +1,28 @@
+{
+  "id": "md.oak_reds_house_1f_to_pallet_town",
+  "description": "MegaMon overworld warp verifier from Red's House 1F to Pallet Town.",
+  "start": {
+    "mode": "load_state",
+    "state": "oak_reds_house_1f_entry"
+  },
+  "save_state_after": "oak_pallet_town_entry",
+  "steps": [
+    {"screenshot": "reds_house_1f_entry"},
+    {"hold": "LEFT", "frames": 120},
+    {"release": 20},
+    {"step": 120},
+    {"hold": "DOWN", "frames": 30},
+    {"release": 20},
+    {"step": 120},
+    {"hold": "LEFT", "frames": 60},
+    {"release": 20},
+    {"step": 120},
+    {"hold": "DOWN", "frames": 120},
+    {"release": 20},
+    {"step": 120},
+    {"hold": "DOWN", "frames": 120},
+    {"release": 20},
+    {"step": 120},
+    {"screenshot": "pallet_town_entry"}
+  ]
+}

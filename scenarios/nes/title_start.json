@@ -1,0 +1,15 @@
+{
+  "id": "nes.title_start",
+  "description": "Boot an NES game, capture its title, and press Start.",
+  "start": {
+    "mode": "reset",
+    "settle_frames": 60
+  },
+  "steps": [
+    { "step": 300 },
+    { "screenshot": "title_before_start" },
+    { "tap": "START", "hold_frames": 8, "release_frames": 2 },
+    { "step": 60 },
+    { "screenshot": "title_after_start" }
+  ]
+}

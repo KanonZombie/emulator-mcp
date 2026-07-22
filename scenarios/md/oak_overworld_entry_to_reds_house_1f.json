@@ -1,0 +1,26 @@
+{
+  "id": "md.oak_overworld_entry_to_reds_house_1f",
+  "description": "MegaMon overworld warp verifier from OakSpeech-entered Red's room to Red's House 1F.",
+  "start": {
+    "mode": "load_state",
+    "state": "oak_overworld_entry"
+  },
+  "save_state_after": "oak_reds_house_1f_entry",
+  "steps": [
+    {"screenshot": "reds_room_entry"},
+    {"hold": "RIGHT", "frames": 120},
+    {"release": 20},
+    {"hold": "UP", "frames": 120},
+    {"release": 20},
+    {"hold": "UP", "frames": 120},
+    {"release": 20},
+    {"hold": "RIGHT", "frames": 120},
+    {"release": 20},
+    {"step": 120},
+    {"hold": "RIGHT", "frames": 1},
+    {"release": 20},
+    {"step": 120},
+    {"screenshot": "reds_house_1f_entry"},
+    {"step": 600}
+  ]
+}

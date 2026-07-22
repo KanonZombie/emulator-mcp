@@ -1,0 +1,29 @@
+{
+  "id": "md.intro_to_title",
+  "description": "MegaMon reset intro sequence through title screen checkpoints.",
+  "start": {
+    "mode": "reset",
+    "settle_frames": 60
+  },
+  "steps": [
+    {"release": 10},
+    {"step": 120},
+    {"screenshot": "intro_early"},
+    {"step": 180},
+    {"screenshot": "intro_mid"},
+    {"step": 240},
+    {"screenshot": "intro_late"},
+    {"step": 300},
+    {"screenshot": "post_intro"},
+    {"step": 220},
+    {"screenshot": "title_anim_early"},
+    {"step": 70},
+    {"screenshot": "title_anim_late"},
+    {"step": 70},
+    {"screenshot": "title_reached"},
+    {"step": 220},
+    {"screenshot": "title_loop_1"},
+    {"step": 220},
+    {"screenshot": "title_loop_2"}
+  ]
+}

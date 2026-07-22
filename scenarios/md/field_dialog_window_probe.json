@@ -1,0 +1,34 @@
+{
+  "id": "md.field_dialog_window_probe",
+  "description": "MegaMon field dialog probe for the sprite-rendered GB Window in Red's room.",
+  "start": {
+    "mode": "reset",
+    "settle_frames": 60
+  },
+  "steps": [
+    {"release": 10},
+    {"step": 100},
+    {"step": 100},
+    {"step": 100},
+    {"step": 100},
+    {"step": 100},
+    {"step": 100},
+    {"step": 100},
+    {"step": 100},
+    {"step": 100},
+    {"step": 100},
+    {"step": 100},
+    {"step": 100},
+    {"step": 100},
+    {"tap": "START", "hold_frames": 12, "release_frames": 2},
+    {"step": 60},
+    {"tap": "A", "hold_frames": 12, "release_frames": 2},
+    {"step": 90},
+    {"screenshot": "overworld_entry"},
+    {"hold": "UP", "frames": 18},
+    {"release": 4},
+    {"tap": "A", "hold_frames": 8, "release_frames": 2},
+    {"step": 60},
+    {"screenshot": "field_dialog"}
+  ]
+}

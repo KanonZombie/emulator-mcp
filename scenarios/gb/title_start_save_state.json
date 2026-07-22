@@ -1,0 +1,14 @@
+{
+  "id": "gb.title_start_save_state",
+  "description": "Reach the title screen, capture it, and save a reusable title_screen state.",
+  "start": {
+    "mode": "reset",
+    "settle_frames": 60
+  },
+  "steps": [
+    {"release": 10},
+    {"step": 600},
+    {"screenshot": "title"}
+  ],
+  "save_state_after": "title_screen"
+}

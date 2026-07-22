@@ -1,0 +1,27 @@
+{
+  "id": "md.oak_final_speech_to_overworld_entry",
+  "description": "MegaMon OakSpeech final speech through SpecialEnterMap/EnterMap into the initial overworld room.",
+  "start": {
+    "mode": "load_state",
+    "state": "oak_final_speech"
+  },
+  "save_state_after": "oak_overworld_entry",
+  "steps": [
+    {"screenshot": "oak_final_speech_page_1"},
+    {"tap": "A", "hold_frames": 8, "release_frames": 4},
+    {"step": 220},
+    {"screenshot": "oak_final_speech_page_2"},
+    {"tap": "A", "hold_frames": 8, "release_frames": 4},
+    {"step": 220},
+    {"screenshot": "oak_final_speech_page_3"},
+    {"tap": "A", "hold_frames": 8, "release_frames": 4},
+    {"step": 220},
+    {"screenshot": "oak_final_speech_page_4"},
+    {"tap": "A", "hold_frames": 8, "release_frames": 4},
+    {"step": 220},
+    {"screenshot": "oak_final_speech_page_5"},
+    {"tap": "A", "hold_frames": 8, "release_frames": 4},
+    {"step": 360},
+    {"screenshot": "oak_overworld_entry"}
+  ]
+}

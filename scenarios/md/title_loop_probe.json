@@ -1,0 +1,27 @@
+{
+  "id": "md.title_loop_probe",
+  "description": "MegaMon title loop fine-grained checkpoints around mon scroll and title ball animation.",
+  "start": {
+    "mode": "reset",
+    "settle_frames": 60
+  },
+  "steps": [
+    {"release": 10},
+    {"step": 500},
+    {"step": 500},
+    {"step": 270},
+    {"screenshot": "title_base"},
+    {"step": 120},
+    {"screenshot": "loop_wait"},
+    {"step": 80},
+    {"screenshot": "loop_scroll_or_ball_a"},
+    {"step": 20},
+    {"screenshot": "loop_scroll_or_ball_b"},
+    {"step": 20},
+    {"screenshot": "loop_ball_or_pick_a"},
+    {"step": 20},
+    {"screenshot": "loop_ball_or_pick_b"},
+    {"step": 20},
+    {"screenshot": "loop_new_mon_in"}
+  ]
+}

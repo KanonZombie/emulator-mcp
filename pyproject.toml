@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bizhawk-emulator-mcp"
+version = "1.0.0"
+description = "MCP server for deterministic BizHawk control across Game Boy, Mega Drive, NES, and SNES"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "MegaMon contributors" }]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
+  "Operating System :: Microsoft :: Windows",
+  "Programming Language :: Python :: 3",
+  "Topic :: Software Development :: Testing",
+]
+dependencies = [
+  "mcp[cli]>=1.0,<2",
+  "Pillow>=10,<13",
+]
+
+[project.scripts]
+emulator-mcp = "mcp_server:main"
+
+[project.urls]
+Homepage = "https://github.com/KanonZombie/emulator-mcp"
+Repository = "https://github.com/KanonZombie/emulator-mcp"
+Issues = "https://github.com/KanonZombie/emulator-mcp/issues"
+
+[tool.setuptools]
+package-dir = { "" = "server" }
+py-modules = ["mcp_server", "gb_gpu_renderer"]
+
+[tool.setuptools.data-files]
+"share/emulator-mcp" = ["bizhawk/bridge.lua"]
+
+[tool.pytest.ini_options]
+testpaths = ["server/tests"]

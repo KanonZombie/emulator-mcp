@@ -1,0 +1,24 @@
+{
+  "id": "pair.title_start",
+  "description": "Run GB and MD title_start scenarios and collect viewport-aware screenshots",
+  "gb": {
+    "scenario": "../gb/title_start.json",
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "w": 160,
+      "h": 144
+    },
+    "canonical_size": [160, 144]
+  },
+  "md": {
+    "scenario": "../md/title_start.json",
+    "viewport": {
+      "x": 80,
+      "y": 40,
+      "w": 160,
+      "h": 144
+    },
+    "canonical_size": [160, 144]
+  }
+}

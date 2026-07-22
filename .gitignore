@@ -1,0 +1,40 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.venv/
+server/.venv/
+build/
+dist/
+runtime/
+.emulator-mcp/
+
+# Local configuration and emulator artifacts.
+.env
+.env.*
+!.env.example
+*.log
+*.state
+*.sav
+*.tmp
+command.txt
+response.txt
+
+# ROMs belong outside the repository.
+roms/
+*.gb
+*.gbc
+*.bin
+*.gen
+*.nes
+*.sfc
+*.smc
+
+# OS/editor noise.
+.DS_Store
+Thumbs.db

@@ -1,0 +1,15 @@
+{
+  "id": "md.oak_after_rival_name_to_final_speech",
+  "description": "MegaMon OakSpeech continuation from confirmed BLUE rival name to Oak's final speech.",
+  "start": {
+    "mode": "load_state",
+    "state": "oak_rival_name_blue_confirm"
+  },
+  "save_state_after": "oak_final_speech",
+  "steps": [
+    {"screenshot": "rival_name_blue_confirm_name"},
+    {"tap": "A", "hold_frames": 8, "release_frames": 4},
+    {"step": 260},
+    {"screenshot": "oak_final_speech_start"}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "gb.title_press_start_from_state",
+  "description": "Load the saved title_screen state, press START, and capture before and after.",
+  "start": {
+    "mode": "load_state",
+    "state": "title_screen"
+  },
+  "steps": [
+    {"screenshot": "before_start"},
+    {"tap": "START", "hold_frames": 12, "release_frames": 2},
+    {"step": 90},
+    {"screenshot": "after_start"}
+  ]
+}
